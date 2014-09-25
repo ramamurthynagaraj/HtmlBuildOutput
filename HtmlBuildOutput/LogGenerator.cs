@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Web.Script.Serialization;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -22,14 +21,30 @@ namespace HtmlBuildOutput
 			eventSource.ProjectStarted += OnProjectStarted;
 			eventSource.ProjectFinished += OnProjectFinished;
 			eventSource.ErrorRaised += OnErrorRaised;
+			eventSource.WarningRaised += OnWarningRaised;
 	    }
+
+	    private void OnWarningRaised(object sender, BuildWarningEventArgs buildWarningEventArgs)
+	    {		    
+			buildLog.BuildWarnings.Add(new CodeIssue
+				                           {
+					                           Time = buildWarningEventArgs.Timestamp.ToString(),
+											   Code = buildWarningEventArgs.Code,
+											   FileName = buildWarningEventArgs.File,
+											   ProjectFile = buildWarningEventArgs.ProjectFile,
+											   Message = buildWarningEventArgs.Message,
+											   SubCategory = buildWarningEventArgs.Subcategory,
+											   LineNumber = buildWarningEventArgs.LineNumber,
+											   ColumnNumber = buildWarningEventArgs.ColumnNumber
+				                           });
+		}
 
 	    private void OnErrorRaised(object sender, BuildErrorEventArgs buildErrorEventArgs)
 	    {
-			buildLog.BuildErrors.Add(new BuildError
+			buildLog.BuildErrors.Add(new CodeIssue
 				                         {
-					                         TimeStamp = buildErrorEventArgs.Timestamp,
-											 ErrorCode = buildErrorEventArgs.Code,
+					                         Time = buildErrorEventArgs.Timestamp.ToString(),
+											 Code = buildErrorEventArgs.Code,
 											 FileName = buildErrorEventArgs.File,
 											 ProjectFile = buildErrorEventArgs.ProjectFile,
 											 Message = buildErrorEventArgs.Message,
@@ -43,7 +58,7 @@ namespace HtmlBuildOutput
 	    {
 			buildLog.ProjectFinishEvents.Add(new ProjectFinishLog
 				                                 {
-					                                 FinishTime = projectFinishedEventArgs.Timestamp,
+					                                 Time = projectFinishedEventArgs.Timestamp.ToString(),
 													 IsBuildSucceeded = projectFinishedEventArgs.Succeeded,
 													 Message = projectFinishedEventArgs.Message,
 													 ProjectFile = projectFinishedEventArgs.ProjectFile
@@ -54,7 +69,7 @@ namespace HtmlBuildOutput
 	    {
 			buildLog.ProjectStartEvents.Add(new ProjectStartLog
 				                                {
-					                                StartTime = projectStartedEventArgs.Timestamp,
+					                                Time = projectStartedEventArgs.Timestamp.ToString(),
 													Message = projectStartedEventArgs.Message,
 													ProjectFile = projectStartedEventArgs.ProjectFile
 				                                });
@@ -62,9 +77,9 @@ namespace HtmlBuildOutput
 
 	    private void OnBuildFinished(object sender, BuildFinishedEventArgs buildFinishedEventArgs)
 	    {
-		    buildLog.BuildEndTime = new BuildFinishLog
+		    buildLog.BuildFinishLog = new BuildFinishLog
 			                            {
-				                            FinishTime = buildFinishedEventArgs.Timestamp,
+				                            Time = buildFinishedEventArgs.Timestamp.ToString(),
 											IsBuildSucceeded = buildFinishedEventArgs.Succeeded,
 											Message = buildFinishedEventArgs.Message
 			                            };
@@ -76,9 +91,9 @@ namespace HtmlBuildOutput
 
 	    private void OnBuildStarted(object sender, BuildStartedEventArgs buildStartedEventArgs)
 	    {
-		    buildLog.BuildStartTime = new BuildStartLog
+		    buildLog.BuildStartLog = new BuildStartLog
 			                              {
-				                              StartTime = buildStartedEventArgs.Timestamp,
+				                              Time = buildStartedEventArgs.Timestamp.ToString(),
 											  Message = buildStartedEventArgs.Message
 			                              };
 	    }

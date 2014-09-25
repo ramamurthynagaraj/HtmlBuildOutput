@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace HtmlBuildOutput
 {
@@ -7,24 +6,24 @@ namespace HtmlBuildOutput
 	{
 		public BuildLog()
 		{
-			ProjectStartEvents = new List<ProjectStartLog>();
-			ProjectFinishEvents = new List<ProjectFinishLog>();
-			BuildErrors = new List<BuildError>();
+			ProjectStartEvents = new ConcurrentBag<ProjectStartLog>();
+			ProjectFinishEvents = new ConcurrentBag<ProjectFinishLog>();
+			BuildErrors = new ConcurrentBag<CodeIssue>();
+			BuildWarnings = new ConcurrentBag<CodeIssue>();
 		}
-		public BuildStartLog BuildStartTime { get; set; }
-		public BuildFinishLog BuildEndTime { get; set; }
-
-		public List<ProjectStartLog> ProjectStartEvents { get; set; }
-		public List<ProjectFinishLog> ProjectFinishEvents { get; set; }
-
-		public List<BuildError> BuildErrors { get; set; } 
+		public BuildStartLog BuildStartLog { get; set; }
+		public BuildFinishLog BuildFinishLog { get; set; }
+		public ConcurrentBag<ProjectStartLog> ProjectStartEvents { get; set; }
+		public ConcurrentBag<ProjectFinishLog> ProjectFinishEvents { get; set; }
+		public ConcurrentBag<CodeIssue> BuildErrors { get; set; }
+		public ConcurrentBag<CodeIssue> BuildWarnings { get; set; }
 	}
 
-	public class BuildError
+	public class CodeIssue
 	{
-		public DateTime TimeStamp { get; set; }
+		public string Time { get; set; }
 
-		public string ErrorCode { get; set; }
+		public string Code { get; set; }
 
 		public string FileName { get; set; }
 
@@ -52,7 +51,7 @@ namespace HtmlBuildOutput
 
 	public class BuildFinishLog
 	{
-		public DateTime FinishTime { get; set; }
+		public string Time { get; set; }
 
 		public bool IsBuildSucceeded { get; set; }
 
@@ -61,7 +60,7 @@ namespace HtmlBuildOutput
 
 	public class BuildStartLog
 	{
-		public DateTime StartTime { get; set; }
+		public string Time { get; set; }
 
 		public string Message { get; set; }
 	}
