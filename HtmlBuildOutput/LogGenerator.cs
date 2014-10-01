@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using System.Web.Script.Serialization;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using HtmlBuildOutput.HtmlReportUtils;
 
 namespace HtmlBuildOutput
 {
@@ -83,9 +83,8 @@ namespace HtmlBuildOutput
 											IsBuildSucceeded = buildFinishedEventArgs.Succeeded,
 											Message = buildFinishedEventArgs.Message
 			                            };
-		    var javaScriptSerializer = new JavaScriptSerializer();
-		    var buildLogString = javaScriptSerializer.Serialize(buildLog);
-		    File.WriteAllText(@"c:\Work\log.txt",buildLogString);
+		    
+		    File.WriteAllText(@"c:\Work\log.html",HtmlBuildReport.GenerateHtmlReportFor(buildLog));
 
 	    }
 
