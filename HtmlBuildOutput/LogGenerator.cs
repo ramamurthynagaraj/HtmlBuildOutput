@@ -9,6 +9,8 @@ namespace HtmlBuildOutput
     {
 	    private static BuildLog buildLog;
 
+	    private string OutputFileName = "BuildOutput.html";
+
 	    public LogGenerator()
 	    {
 		    buildLog = new BuildLog();
@@ -16,6 +18,10 @@ namespace HtmlBuildOutput
 
 	    public override void Initialize(IEventSource eventSource)
 	    {
+		    if (!string.IsNullOrWhiteSpace(Parameters))
+		    {
+				OutputFileName = Parameters;			    
+		    }
 		    eventSource.BuildStarted += OnBuildStarted; 
 			eventSource.BuildFinished += OnBuildFinished;
 			eventSource.ProjectStarted += OnProjectStarted;
@@ -83,8 +89,8 @@ namespace HtmlBuildOutput
 											IsBuildSucceeded = buildFinishedEventArgs.Succeeded,
 											Message = buildFinishedEventArgs.Message
 			                            };
-		    
-		    File.WriteAllText(@"c:\Work\log.html",HtmlBuildReport.GenerateHtmlReportFor(buildLog));
+
+			File.WriteAllText(OutputFileName, HtmlBuildReport.GenerateHtmlReportFor(buildLog));
 
 	    }
 
